@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func test_proxyAddComment(t *testing.T) {
+func Test_proxyAddComment(t *testing.T) {
 	//ファイルがあったら上書き、なかったら新規作成。最後に追記ではない
 	file, err := os.OpenFile("proxy.txt", os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {

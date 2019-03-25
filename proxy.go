@@ -2,13 +2,13 @@
 package main
 
 import (
-	"os"
 	"bufio"
+	"os"
 	"regexp"
 )
 
 // プロキシが書かれた行の先頭に#,コメントアウトを入れる(ファイルを書き換える)
-func ProxyAddComment(file *os.File) (err error) {
+func proxyAddComment(file *os.File) (err error) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -23,7 +23,7 @@ func ProxyAddComment(file *os.File) (err error) {
 }
 
 // プロキシが書かれた行の先頭の#を抜く（実際には書き換える）
-func ProxySubComment(file *os.File) (err error) {
+func proxySubComment(file *os.File) (err error) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
