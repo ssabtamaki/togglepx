@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"os"
 	"regexp"
+	"fmt"
 )
 
 // プロキシが書かれた行の先頭に#,コメントアウトを入れる(ファイルを書き換える)
@@ -12,12 +13,13 @@ func proxyAddComment(file *os.File) (err error) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
+		fmt.Print(line)
 		rep := regexp.MustCompile(`kanazawa-it.ac.jp`)
 		if rep.MatchString(line) {
 			line = rep.ReplaceAllString(line, "# kanazawa-it.ac.jp:8080")
-			//以下は、lineの行を書き換えたい
-			//~~~
+			//バッファに格納していき、最後にバッファをファイルに出力しなおす
 		}
+		file.WriteString(line)
 	}
 	return
 }
@@ -30,9 +32,8 @@ func proxySubComment(file *os.File) (err error) {
 		rep := regexp.MustCompile(`kanazawa-it.ac.jp`)
 		if rep.MatchString(line) {
 			line = rep.ReplaceAllString(line, "kanazawa-it.ac.jp:8080")
-			//以下で、ファイルの内容を書き換えたい
-			//~~~
 		}
+		file.WriteString(line)
 	}
 	return
 }

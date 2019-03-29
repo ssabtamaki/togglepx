@@ -9,7 +9,7 @@ func Test_getNetIPv4(t *testing.T) {
 	if err != nil {
 		t.Errorf("error to getNetIPv4")
 	}
-	if netIPv4.String() != "192.168.11.0" {
+	if (netIPv4.String() != "192.168.16.0") {
 		t.Errorf("Error to get NetworkIPaddress")
 	}
 }
