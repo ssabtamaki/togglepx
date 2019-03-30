@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-func getNetIPv4() (netIPv4 net.IP, err error){
+func getNetIPv4() (netIPv4 net.IP, err error) {
 	// すべてのアドレスを取得
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {

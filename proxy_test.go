@@ -1,77 +1,66 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
+	"io/ioutil"
 	"os"
-	"regexp"
+	"strings"
 	"testing"
 )
 
 func Test_proxyAddComment(t *testing.T) {
 	//ファイルがあったら上書き、なかったら新規作成。最後に追記ではない
-	file, err := os.OpenFile("proxy.txt", os.O_WRONLY|os.O_CREATE, 0666)
+	filename := "proxy.txt"
+	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		t.Error("Error to Open File", err)
 	}
 	defer file.Close()
-	fmt.Fprintln(file, "kanazawa-it.ac.jp:8080")
 
-	err = proxyAddComment(file)
+	_, err = file.Write([]byte("kanazawa-it.ac.jp:8080"))
+	if err != nil {
+		t.Error("Error to Write to File")
+	}
+
+	err = proxyAddComment(filename)
 	if err != nil {
 		t.Errorf("Error ProxyAddComment")
 	}
 
-	//以下で、正規表現をして、プロキシが書かれている行にコメントアウトができているかをテストする
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		//プロキシが書かれている行を見つけられるかを調べる
-		rex := regexp.MustCompile(`kanazawa-it.ac.jp:8080`)
-		//マッチ失敗時
-		if !rex.MatchString(line) {
-			t.Errorf("Error to regexp proxy")
-			return
-		}
-		//プロキシが記載されている行の先頭に、コメントアウトがされているかを調べる
-		coRex := regexp.MustCompile(`# kanazawa-it.ac.jp:8080`)
-		//coRexとlineのマッチ失敗時
-		if !coRex.MatchString(line) {
-			t.Error("Error to write # add to file", err)
-		}
+	input, err := ioutil.ReadFile(filename)
+	if err != nil {
+		t.Error("Error to Read File")
+	}
+	//ここを正規表現に変えたい
+	if strings.Contains(string(input), "kanazawa-it.ac.jp") {
+		t.Error("Error to Proxy Replace")
 	}
 }
 
 func Test_proxySubComment(t *testing.T) {
 	//ファイルがあったら上書き、なかったら新規作成。最後に追記ではない
-	file, err := os.OpenFile("proxy.txt", os.O_WRONLY|os.O_CREATE, 0666)
+	filename := "proxy.txt"
+	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		t.Error("Error to Open File", err)
 	}
 	defer file.Close()
-	fmt.Fprintln(file, "kanazawa-it.ac.jp:8080")
 
-	err = proxySubComment(file)
+	_, err = file.Write([]byte("# kanazawa-it.ac.jp:8080"))
 	if err != nil {
-		t.Errorf("Error ProxyAddComment")
+		t.Error("Error to Write to File")
 	}
 
-	//以下で、正規表現をして、プロキシが書かれている行にコメントアウトができているかをテストする
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		//プロキシが書かれている行を見つけられるかを調べる
-		rex := regexp.MustCompile(`kanazawa-it.ac.jp:8080`)
-		//マッチ失敗時
-		if !rex.MatchString(line) {
-			t.Errorf("Error to regexp proxy")
-			return
-		}
-		//プロキシが記載されている行の先頭に、コメントアウトがされているかを調べる
-		coRex := regexp.MustCompile(`kanazawa-it.ac.jp:8080`)
-		//coRexとlineのマッチ失敗時
-		if !coRex.MatchString(line) {
-			t.Error("Error to write # sub to file", err)
-		}
+	err = proxySubComment(filename)
+	if err != nil {
+		t.Errorf("Error ProxySubComment")
+	}
+
+	input, err := ioutil.ReadFile(filename)
+	if err != nil {
+		t.Error("Error to Read File")
+	}
+	//ここを正規表現に変えたい
+	if strings.Contains(string(input), "# kanazawa-it.ac.jp") {
+		t.Error("Error to Proxy Replace")
 	}
 }

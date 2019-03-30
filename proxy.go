@@ -2,38 +2,43 @@
 package main
 
 import (
-	"bufio"
-	"os"
-	"regexp"
-	"fmt"
+	"io/ioutil"
+	"strings"
 )
 
-// プロキシが書かれた行の先頭に#,コメントアウトを入れる(ファイルを書き換える)
-func proxyAddComment(file *os.File) (err error) {
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		fmt.Print(line)
-		rep := regexp.MustCompile(`kanazawa-it.ac.jp`)
-		if rep.MatchString(line) {
-			line = rep.ReplaceAllString(line, "# kanazawa-it.ac.jp:8080")
-			//バッファに格納していき、最後にバッファをファイルに出力しなおす
-		}
-		file.WriteString(line)
+func proxyAddComment(filename string) (err error) {
+	input, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return
+	}
+
+	//ここの部分、正規表現で完全一致に切るように変更したほうがいいかもしれない
+	//変更の余地あり
+	//もうすでにコメントアウトされているときは何もしない
+	if !strings.Contains(string(input), "# kanazawa-it.ac.jp") {
+		output := strings.Replace(string(input), "kanazawa-it.ac.jp", "# kanazawa-it.ac.jp", 1)
+		err = ioutil.WriteFile(filename, []byte(output), 0666)
+	}
+	if err != nil {
+		return
 	}
 	return
 }
 
-// プロキシが書かれた行の先頭の#を抜く（実際には書き換える）
-func proxySubComment(file *os.File) (err error) {
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		rep := regexp.MustCompile(`kanazawa-it.ac.jp`)
-		if rep.MatchString(line) {
-			line = rep.ReplaceAllString(line, "kanazawa-it.ac.jp:8080")
-		}
-		file.WriteString(line)
+func proxySubComment(filename string) (err error) {
+	input, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return
+	}
+
+	//ここの部分、正規表現で完全一致に切るように変更したほうがいいかもしれない
+	//変更の余地あり
+	if strings.Contains(string(input), "kanazawa-it.ac.jp") {
+		output := strings.Replace(string(input), "# kanazawa-it.ac.jp", "kanazawa-it.ac.jp", 1)
+		err = ioutil.WriteFile(filename, []byte(output), 0666)
+	}
+	if err != nil {
+		return
 	}
 	return
 }
