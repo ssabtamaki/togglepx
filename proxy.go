@@ -12,12 +12,12 @@ func proxyAddComment(filename string) (err error) {
 		return
 	}
 
-	//ここの部分、正規表現で完全一致に切るように変更したほうがいいかもしれない
-	//変更の余地あり
-	//もうすでにコメントアウトされているときは何もしない
-	if !strings.Contains(string(input), "# kanazawa-it.ac.jp") {
-		output := strings.Replace(string(input), "kanazawa-it.ac.jp", "# kanazawa-it.ac.jp", 1)
-		err = ioutil.WriteFile(filename, []byte(output), 0666)
+	//"kanazawa-it.ac.jp"があるが、 "# kanazawa-it.ac.jp"ではないとき
+	if (strings.Contains(string(input), "kanazawa-it.ac.jp")) {
+		if !strings.Contains(string(input), "# kanazawa-it.ac.jp") {
+			output := strings.Replace(string(input), "kanazawa-it.ac.jp", "# kanazawa-it.ac.jp", 1)
+			err = ioutil.WriteFile(filename, []byte(output), 0666)
+		}
 	}
 	if err != nil {
 		return
@@ -31,9 +31,7 @@ func proxySubComment(filename string) (err error) {
 		return
 	}
 
-	//ここの部分、正規表現で完全一致に切るように変更したほうがいいかもしれない
-	//変更の余地あり
-	if strings.Contains(string(input), "kanazawa-it.ac.jp") {
+	if strings.Contains(string(input), "# kanazawa-it.ac.jp") {
 		output := strings.Replace(string(input), "# kanazawa-it.ac.jp", "kanazawa-it.ac.jp", 1)
 		err = ioutil.WriteFile(filename, []byte(output), 0666)
 	}

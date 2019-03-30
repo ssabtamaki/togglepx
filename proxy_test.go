@@ -30,8 +30,8 @@ func Test_proxyAddComment(t *testing.T) {
 	if err != nil {
 		t.Error("Error to Read File")
 	}
-	//ここを正規表現に変えたい
-	if strings.Contains(string(input), "kanazawa-it.ac.jp") {
+
+	if !strings.Contains(string(input), "# kanazawa-it.ac.jp") {
 		t.Error("Error to Proxy Replace")
 	}
 }
