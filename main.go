@@ -8,6 +8,8 @@ import (
 const (
 	gitConfig = "/Users/ssab/.gitConfig.org"
 	//test = "proxy.txt"
+	//プロキシ下にある大学のネットワークアドレス.
+	univIP = "192.168.16.0"
 )
 
 func main() {
@@ -17,7 +19,7 @@ func main() {
 	}
 
 	//大学以外のとき
-	if netIPv4.String() != "192.168.16.0" {
+	if netIPv4.String() != univIP {
 		err = proxySubComment(gitConfig)
 		if err != nil {
 			fmt.Println("Failed to Comment Out")
