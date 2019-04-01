@@ -1,12 +1,13 @@
 // IPv4アドレスを求めるプログラム
-package main
+package fproxy
 
 import (
 	"fmt"
 	"net"
 )
 
-func getNetIPv4() (netIPv4 net.IP, err error) {
+//ネットワークアドレスを取得する
+func GetNetIPv4() (netIPv4 net.IP, err error) {
 	// すべてのアドレスを取得
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {

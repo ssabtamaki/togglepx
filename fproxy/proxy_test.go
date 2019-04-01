@@ -1,4 +1,4 @@
-package main
+package fproxy
 
 import (
 	"io/ioutil"
@@ -21,7 +21,7 @@ func Test_proxyAddComment(t *testing.T) {
 		t.Error("Error to Write to File")
 	}
 
-	err = proxyAddComment(filename)
+	err = ProxyAddComment(filename)
 	if err != nil {
 		t.Errorf("Error ProxyAddComment")
 	}
@@ -50,7 +50,7 @@ func Test_proxySubComment(t *testing.T) {
 		t.Error("Error to Write to File")
 	}
 
-	err = proxySubComment(filename)
+	err = ProxySubComment(filename)
 	if err != nil {
 		t.Errorf("Error ProxySubComment")
 	}

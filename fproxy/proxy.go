@@ -1,5 +1,5 @@
 // プロキシファイルに#を加える関数と、抜き取る関数
-package main
+package fproxy
 
 import (
 	"io/ioutil"
@@ -11,7 +11,8 @@ const (
 	commentProxy = "# proxy"
 )
 
-func proxyAddComment(filename string) (err error) {
+//filenameのPROXY行の先頭に#を追加する
+func ProxyAddComment(filename string) (err error) {
 	input, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return
@@ -28,7 +29,8 @@ func proxyAddComment(filename string) (err error) {
 	return
 }
 
-func proxySubComment(filename string) (err error) {
+//filenameのPROXYの先頭に#を削除する
+func ProxySubComment(filename string) (err error) {
 	input, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return
