@@ -1,12 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"stepupgo/fproxy"
 )
 
 const (
-	gitConfig = "/Users/ssab/.gitConfig.org"
+	gitConfig = "/Users/ssab/.gitconfig.org"
 	//プロキシ下にある大学のネットワークアドレス.
 	univIP = "192.168.16.0"
 	//test = "proxy.txt"
@@ -20,13 +21,13 @@ func main() {
 
 	//大学以外のとき
 	if netIPv4.String() != univIP {
-		err = fproxy.ProxySubComment(gitConfig)
+		err = fproxy.ProxyAddComment(gitConfig)
 		if err != nil {
 			fmt.Println("Failed to Comment Out")
 		}
 	}
 	//大学にいるとき
-	err = fproxy.ProxyAddComment(gitConfig)
+	err = fproxy.ProxySubComment(gitConfig)
 	if err != nil {
 		fmt.Println("Failed to Comment Out")
 	}

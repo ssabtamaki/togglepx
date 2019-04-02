@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	noCommentProxy = "proxy"
-	commentProxy = "# proxy"
+	noCommentProxy = "proxy="
+	commentProxy   = "# proxy="
 )
 
 //filenameのPROXY行の先頭に#を追加する
@@ -18,7 +18,7 @@ func ProxyAddComment(filename string) (err error) {
 		return
 	}
 
-	//"kanazawa-it.ac.jp"があるが、 "# kanazawa-it.ac.jp"ではないとき
+	//"proxy"があるが、 "# proxy"ではないとき
 	if strings.Contains(string(input), noCommentProxy) && !strings.Contains(string(input), commentProxy) {
 		output := strings.Replace(string(input), noCommentProxy, commentProxy, 1)
 		err = ioutil.WriteFile(filename, []byte(output), 0666)
