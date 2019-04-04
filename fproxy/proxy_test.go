@@ -16,7 +16,7 @@ func Test_proxyAddComment(t *testing.T) {
 	}
 	defer file.Close()
 
-	_, err = file.Write([]byte("proxy=kanazawa-it.ac.jp:8080"))
+	_, err = file.Write([]byte("proxy=<>:<>"))
 	if err != nil {
 		t.Error("Error to Write to File")
 	}
@@ -31,7 +31,7 @@ func Test_proxyAddComment(t *testing.T) {
 		t.Error("Error to Read File")
 	}
 
-	if !strings.Contains(string(input), commentProxy) {
+	if !strings.Contains(string(input), CommentProxy) {
 		t.Error("Error to Proxy Replace")
 	}
 }
@@ -45,7 +45,7 @@ func Test_proxySubComment(t *testing.T) {
 	}
 	defer file.Close()
 
-	_, err = file.Write([]byte("# proxy=kanazawa-it.ac.jp:8080"))
+	_, err = file.Write([]byte("# proxy=<>:<>"))
 	if err != nil {
 		t.Error("Error to Write to File")
 	}
@@ -59,8 +59,8 @@ func Test_proxySubComment(t *testing.T) {
 	if err != nil {
 		t.Error("Error to Read File")
 	}
-	//ここを正規表現に変えたい
-	if strings.Contains(string(input), commentProxy) {
+
+	if strings.Contains(string(input), CommentProxy) {
 		t.Error("Error to Proxy Replace")
 	}
 }
