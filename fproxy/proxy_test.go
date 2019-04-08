@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func Test_proxyAddComment(t *testing.T) {
+func Test_SwitchProxyAuto(t *testing.T) {
 	//ファイルがあったら上書き、なかったら新規作成。最後に追記ではない
 	filename := "proxy.txt"
 	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0666)
@@ -21,9 +21,9 @@ func Test_proxyAddComment(t *testing.T) {
 		t.Error("Error to Write to File")
 	}
 
-	err = ProxyAddComment(filename)
+	err = SwitchProxyAuto(filename)
 	if err != nil {
-		t.Errorf("Error ProxyAddComment")
+		t.Errorf("Error SwitchProxyAdd")
 	}
 
 	input, err := ioutil.ReadFile(filename)
@@ -31,36 +31,20 @@ func Test_proxyAddComment(t *testing.T) {
 		t.Error("Error to Read File")
 	}
 
-	if !strings.Contains(string(input), CommentProxy) {
+	if !strings.Contains(string(input), cPx) {
 		t.Error("Error to Proxy Replace")
 	}
-}
 
-func Test_proxySubComment(t *testing.T) {
-	//ファイルがあったら上書き、なかったら新規作成。最後に追記ではない
-	filename := "proxy.txt"
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0666)
+	err = SwitchProxyAuto(filename)
 	if err != nil {
-		t.Error("Error to Open File", err)
+		t.Errorf("Error SwitchProxySub")
 	}
-	defer file.Close()
-
-	_, err = file.Write([]byte("# proxy=<>:<>"))
-	if err != nil {
-		t.Error("Error to Write to File")
-	}
-
-	err = ProxySubComment(filename)
-	if err != nil {
-		t.Errorf("Error ProxySubComment")
-	}
-
-	input, err := ioutil.ReadFile(filename)
+	input, err = ioutil.ReadFile(filename)
 	if err != nil {
 		t.Error("Error to Read File")
 	}
 
-	if strings.Contains(string(input), CommentProxy) {
+	if strings.Contains(string(input), cPx) {
 		t.Error("Error to Proxy Replace")
 	}
 }

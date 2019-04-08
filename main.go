@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"stepupgo/fproxy"
 )
@@ -15,21 +16,20 @@ const (
 func main() {
 	netIPv4, err := fproxy.GetNetIPv4()
 	if err != nil {
-		//log.Fatal("Error to netIPv4")
-		fmt.Fprintln(os.Stderr, "Error to netIPv4")
+		log.Println("Error to netIPv4")
 		os.Exit(1)
 	}
 
 	//大学にいるとき
 	if netIPv4.String() == univIP {
-		err = fproxy.ProxySubComment(gitConfig)
+		err = fproxy.SwitchProxyAuto(gitConfig)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Failed to Comment Out")
 		}
 		return
 	}
 	//大学以外のとき
-	err = fproxy.ProxyAddComment(gitConfig)
+	err = fproxy.SwitchProxyAuto(gitConfig)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Failed to Comment Out")
 	}
