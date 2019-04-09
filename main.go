@@ -11,6 +11,7 @@ const (
 	gitConfig = "/Users/ssab/.gitconfig.org"
 	//プロキシ下にある大学のネットワークアドレス.
 	univIP = "192.168.16.0"
+	FilePath = "/test/cli"
 )
 
 func main() {
