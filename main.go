@@ -4,34 +4,36 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"stepupgo/cli"
 	"stepupgo/fproxy"
 )
 
-const (
-	gitConfig = "/Users/ssab/.gitconfig.org"
-	//プロキシ下にある大学のネットワークアドレス.
-	univIP = "192.168.16.0"
-	FilePath = "/test/cli"
-)
-
+//mainの実行順序はどうしたほうがベストなのか？
 func main() {
+	if !((cli.Fpath == "") && (cli.PxIP == "")) {
+		fmt.Fprintln(os.Stderr, "IPアドレスもしくは対象ファイルが設定されていません。プロキシの自動切り替えは行わず、CLIを起動します")
+		stream := &cli.Stream{OutStream: os.Stdout, ErrStream: os.Stderr}
+		os.Exit(stream.Run(os.Args))
+	}
+
 	netIPv4, err := fproxy.GetNetIPv4()
 	if err != nil {
 		log.Println("Error to netIPv4")
 		os.Exit(1)
 	}
-
-	//大学にいるとき
-	if netIPv4.String() == univIP {
-		err = fproxy.SwitchProxyAuto(gitConfig)
+	//プロキシ下のネットワークアドレスにいるとき
+	if netIPv4.String() == cli.PxIP {
+		err = fproxy.SwitchProxyAuto(cli.Fpath)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Failed to Comment Out")
+			fmt.Fprintln(os.Stderr, "Failed to Comment Out.　自動コメントアウトに失敗しました")
 		}
-		return
+		return		//os.Exit(0)のほうがいい？
 	}
-	//大学以外のとき
-	err = fproxy.SwitchProxyAuto(gitConfig)
+	//プロキシ環境下以外のとき
+	err = fproxy.SwitchProxyAuto(cli.Fpath)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Failed to Comment Out")
+		fmt.Fprintln(os.Stderr, "Failed to Comment Out. 自動コメントアウトに失敗しました")
 	}
+	stream := &cli.Stream{OutStream: os.Stdout, ErrStream: os.Stderr}
+	os.Exit(stream.Run(os.Args))
 }

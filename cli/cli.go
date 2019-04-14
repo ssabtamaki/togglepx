@@ -11,23 +11,33 @@ const (
 	ExitCodeParseFlagError
 )
 
-type cli struct {
-	outStream, errStream io.Writer
+type Stream struct {
+	OutStream, ErrStream io.Writer
 }
 
-//var fpath string
+var Fpath string
+var PxIP string
 
-func (c *cli) Run(args []string) int {
+func (s *Stream) Run(args []string) int {
 	//switch file proxy = swfpx
 	flags := flag.NewFlagSet("swfpx", flag.ContinueOnError)
-	flags.SetOutput(c.errStream)
-	var fpath string	//ここ少し問題
-	//引数でパスが入力されたら、fpathに代入される
-	flags.StringVar(&fpath, "fpath", fpath, "Specify the path of the file you want to target proxy on/off. プロキシのオンオフ対象のファイルのPATHを設定します")
-	var cancel bool
-	flags.BoolVar(&cancel, "cancel", false, "Cancel the registered path. 登録されているパスを解除します")
-	var check bool
-	flags.BoolVar(&check, "check", false, "Check the currently set path. 現在設定されているパスを確認します")
+	flags.SetOutput(s.ErrStream)
+
+	//ここ、StringVarじゃなくてIP型で、flags.Varでやるのもあり？
+	//そのときは、、コマンドラインから受け取るのは文字列。文字列からIPに変換する必要がある
+	//そうしたほうが、IPアドレスじゃなかったとき、エラーが吐ける
+	flags.StringVar(&PxIP, "pxip", PxIP, "Register a network address. When registering, please register the address under proxy environment. ネットワークアドレスを登録します。登録するときは、プロキシ環境下のアドレスを登録してください")
+	var checkIP bool
+	flags.BoolVar(&checkIP, "checkip", false, "登録したネットワークアドレスの値を確認します")
+	var cancelIP bool
+	flags.BoolVar(&cancelIP, "cancelip", false, "登録したネットワークアドレスの値を解除します")
+
+	flags.StringVar(&Fpath, "filepath", Fpath, "Specify the path of the file you want to target proxy on/off. プロキシのオンオフ対象のファイルのPATHを設定します")
+	var cancelPath bool
+	flags.BoolVar(&cancelPath, "cancelpath", false, "Cancel the registered path. 登録されているパスを解除します")
+	var checkPath bool
+	flags.BoolVar(&checkPath, "checkpath", false, "Check the currently set path. 現在設定されているパスを確認します")
+
 	var effective bool
 	var ineffective bool
 	flags.BoolVar(&effective, "effective", false, "Uncomment the target file and activate the proxy. 対象ファイルのコメントをはずし、プロキシを有効化します")
@@ -36,20 +46,30 @@ func (c *cli) Run(args []string) int {
 	if err := flags.Parse(args[1:]); err != nil {
 		return ExitCodeParseFlagError
 	}
-	if fpath != "" {
-		fmt.Fprintf(c.errStream, "プロキシのオンオフ対象のファイルを、%sにPATHを設定しました", fpath)
+	if PxIP != "" {
+		fmt.Fprintf(s.ErrStream, "ネットワークアドレス%sを登録しました", PxIP)
 	}
-	if cancel {
-		fmt.Fprint(c.errStream, "設定されているPATHを取り消しました")
+	if checkIP {
+		fmt.Fprintf(s.ErrStream, "現在設定されているネットワークアドレスは%sです", PxIP)
 	}
-	if check {
-		fmt.Fprintf(c.errStream, "現在設定されているPATHは%sです", fpath)
+	if cancelIP {
+		fmt.Fprint(s.ErrStream, "設定されているネットワークアドレスを取り消しました")
+	}
+	if Fpath != "" {
+		fmt.Fprintf(s.ErrStream, "プロキシのオンオフ対象のファイルを、%sにPATHを設定しました", Fpath)
+	}
+	if cancelPath {
+		fmt.Fprint(s.ErrStream, "設定されているPATHを取り消しました")
+	}
+	if checkPath {
+		fmt.Fprintf(s.ErrStream, "現在設定されているPATHは%sです", Fpath)
 	}
 	if effective {
-		fmt.Fprint(c.errStream, "対象ファイルのコメントをはずし、プロキシを有効化します")
+		fmt.Fprint(s.ErrStream, "対象ファイルのコメントをはずし、プロキシを有効化します")
 	}
 	if ineffective {
-		fmt.Fprint(c.errStream, "対象ファイルにコメントをつけ、プロキシを無効化しました")
+		fmt.Fprint(s.ErrStream, "対象ファイルにコメントをつけ、プロキシを無効化しました")
 	}
+
 	return ExitCodeOK
 }

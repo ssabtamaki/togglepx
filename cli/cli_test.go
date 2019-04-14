@@ -2,31 +2,63 @@ package cli
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 	"testing"
-	"fmt"
 )
 
-const FilePath = "/test/cli"
+const filePath = "/test/cli"
+const ip = "127.0.0.1"
 
 func Test_swfpx(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
-	cli := &cli{outStream:outStream, errStream: errStream}
-	args := strings.Split("swfpx -fpath /test/cli", " ")
-	status := cli.Run(args)
+	stream := &Stream{OutStream: outStream, ErrStream: errStream}
+	args := strings.Split("swfpx -pxip 127.0.0.1", " ")
+	status := stream.Run(args)
 	if status != ExitCodeOK {
 		t.Errorf("ExitStatus = %d, want %d", status, ExitCodeOK)
 	}
-	expected := fmt.Sprintf("プロキシのオンオフ対象のファイルを、%sにPATHを設定しました", FilePath)
-	//ここちょっと問題がある。fpathをグローバルにするとテストが通るが、ローカルだと通らない
-	//原因を救命する必要がある
+	expected := fmt.Sprintf("ネットワークアドレス%sを登録しました", ip)
 	if !strings.Contains(errStream.String(), expected) {
 		t.Errorf("output=%q, want %q", errStream.String(), expected)
 	}
 
 	errStream.Reset()
-	args = strings.Split("swfpx -cancel", " ")
-	status = cli.Run(args)
+	args = strings.Split("swfpx -checkip", " ")
+	status = stream.Run(args)
+	if status != ExitCodeOK {
+		t.Errorf("ExitStatus = %d, want %d", status, ExitCodeOK)
+	}
+	expected = fmt.Sprintf("現在設定されているネットワークアドレスは%sです", PxIP)
+	if !strings.Contains(errStream.String(), expected) {
+		t.Errorf("output=%q, want %q", errStream.String(), expected)
+	}
+
+	errStream.Reset()
+	args = strings.Split("swfpx -cancelip", " ")
+	status = stream.Run(args)
+	if status != ExitCodeOK {
+		t.Errorf("ExitStatus = %d, want %d", status, ExitCodeOK)
+	}
+	expected = fmt.Sprintf("設定されているネットワークアドレスを取り消しました")
+	if !strings.Contains(errStream.String(), expected) {
+		t.Errorf("output=%q, want %q", errStream.String(), expected)
+	}
+
+	errStream.Reset()
+	args = strings.Split("swfpx -filepath /test/cli", " ")
+	status = stream.Run(args)
+	if status != ExitCodeOK {
+		t.Errorf("ExitStatus = %d, want %d", status, ExitCodeOK)
+	}
+	expected = fmt.Sprintf("プロキシのオンオフ対象のファイルを、%sにPATHを設定しました", filePath)
+	if !strings.Contains(errStream.String(), expected) {
+		t.Errorf("output=%q, want %q", errStream.String(), expected)
+	}
+
+	errStream.Reset()
+	args = strings.Split("swfpx -cancelpath", " ")
+	status = stream.Run(args)
 	if status != ExitCodeOK {
 		t.Errorf("ExitStatus = %d, want %d", status, ExitCodeOK)
 	}
@@ -36,19 +68,19 @@ func Test_swfpx(t *testing.T) {
 	}
 
 	errStream.Reset()
-	args = strings.Split("swfpx -check", " ")
-	status = cli.Run(args)
+	args = strings.Split("swfpx -checkpath", " ")
+	status = stream.Run(args)
 	if status != ExitCodeOK {
 		t.Errorf("ExitStatus = %d, want %d", status, ExitCodeOK)
 	}
-	expected = fmt.Sprintf("現在設定されているPATHは%sです", FilePath)
+	expected = fmt.Sprintf("現在設定されているPATHは%sです", filePath)
 	if !strings.Contains(errStream.String(), expected) {
 		t.Errorf("output=%q, want %q", errStream.String(), expected)
 	}
 
 	errStream.Reset()
 	args = strings.Split("swfpx -effective", " ")
-	status = cli.Run(args)
+	status = stream.Run(args)
 	if status != ExitCodeOK {
 		t.Errorf("ExitStatus = %d, want %d", status, ExitCodeOK)
 	}
@@ -59,7 +91,7 @@ func Test_swfpx(t *testing.T) {
 
 	errStream.Reset()
 	args = strings.Split("swfpx -ineffective", " ")
-	status = cli.Run(args)
+	status = stream.Run(args)
 	if status != ExitCodeOK {
 		t.Errorf("ExitStatus = %d, want %d", status, ExitCodeOK)
 	}
