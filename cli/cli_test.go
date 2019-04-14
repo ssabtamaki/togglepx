@@ -7,8 +7,10 @@ import (
 	"testing"
 )
 
-const filePath = "/test/cli"
-const ip = "127.0.0.1"
+const (
+	filePath = "/test/cli"
+	ip       = "127.0.0.1"
+)
 
 func Test_swfpx(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)

@@ -8,7 +8,6 @@ import (
 )
 
 func Test_SwitchProxyAuto(t *testing.T) {
-	//ファイルがあったら上書き、なかったら新規作成。最後に追記ではない
 	filename := "proxy.txt"
 	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {

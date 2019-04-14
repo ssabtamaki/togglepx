@@ -18,21 +18,21 @@ type Stream struct {
 var Fpath string
 var PxIP string
 
+//CLIのコマンドの設定と実行
 func (s *Stream) Run(args []string) int {
-	//switch file proxy = swfpx
+	//swfpx = switch file proxy
 	flags := flag.NewFlagSet("swfpx", flag.ContinueOnError)
 	flags.SetOutput(s.ErrStream)
 
 	//ここ、StringVarじゃなくてIP型で、flags.Varでやるのもあり？
-	//そのときは、、コマンドラインから受け取るのは文字列。文字列からIPに変換する必要がある
-	//そうしたほうが、IPアドレスじゃなかったとき、エラーが吐ける
+	//そうしたほうが、IPアドレスじゃなかったときにエラーが吐ける
 	flags.StringVar(&PxIP, "pxip", PxIP, "Register a network address. When registering, please register the address under proxy environment. ネットワークアドレスを登録します。登録するときは、プロキシ環境下のアドレスを登録してください")
 	var checkIP bool
-	flags.BoolVar(&checkIP, "checkip", false, "登録したネットワークアドレスの値を確認します")
+	flags.BoolVar(&checkIP, "checkip", false, "Check the registered network address value. 登録したネットワークアドレスの値を確認します")
 	var cancelIP bool
-	flags.BoolVar(&cancelIP, "cancelip", false, "登録したネットワークアドレスの値を解除します")
+	flags.BoolVar(&cancelIP, "cancelip", false, "Cancel the registered network address value. 登録したネットワークアドレスの値を解除します")
 
-	flags.StringVar(&Fpath, "filepath", Fpath, "Specify the path of the file you want to target proxy on/off. プロキシのオンオフ対象のファイルのPATHを設定します")
+	flags.StringVar(&Fpath, "filepath", Fpath, "Set the PATH of the target proxy file on/off. プロキシのオンオフ対象のファイルのPATHを設定します")
 	var cancelPath bool
 	flags.BoolVar(&cancelPath, "cancelpath", false, "Cancel the registered path. 登録されているパスを解除します")
 	var checkPath bool

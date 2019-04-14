@@ -1,4 +1,3 @@
-// プロキシファイルに#を加える関数と、抜き取る関数
 package fproxy
 
 import (
@@ -11,7 +10,7 @@ const (
 	cPx = "# proxy="
 )
 
-//filenameのPROXY行の先頭に#を追加する
+//ファイルのプロキシが書かれている行に#を入れたり抜いたりする
 func SwitchProxyAuto(filename string) (err error) {
 	input, err := ioutil.ReadFile(filename)
 	if err != nil {
