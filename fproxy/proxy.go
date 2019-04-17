@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	px  = "proxy="
-	cPx = "# proxy="
+	Px  = "proxy="
+	Cpx = "# proxy="
 )
 
 //ファイルのプロキシが書かれている行に#を入れたり抜いたりする
@@ -16,7 +16,7 @@ func SwitchProxyAuto(filename string) (err error) {
 	if err != nil {
 		return
 	}
-	output := strings.NewReplacer(px, cPx, cPx, px).Replace(string(input))
+	output := strings.NewReplacer(Px, Cpx, Cpx, Px).Replace(string(input))
 	err = ioutil.WriteFile(filename, []byte(output), 0666)
 	if err != nil {
 		return

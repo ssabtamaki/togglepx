@@ -1,8 +1,9 @@
-package fproxy
+package test
 
 import (
 	"io/ioutil"
 	"os"
+	"stepupgo/fproxy"
 	"strings"
 	"testing"
 )
@@ -20,7 +21,7 @@ func Test_SwitchProxyAuto(t *testing.T) {
 		t.Error("Error to Write to File")
 	}
 
-	err = SwitchProxyAuto(filename)
+	err = fproxy.SwitchProxyAuto(filename)
 	if err != nil {
 		t.Errorf("Error SwitchProxyAdd")
 	}
@@ -30,11 +31,11 @@ func Test_SwitchProxyAuto(t *testing.T) {
 		t.Error("Error to Read File")
 	}
 
-	if !strings.Contains(string(input), cPx) {
+	if !strings.Contains(string(input), fproxy.Cpx) {
 		t.Error("Error to Proxy Replace")
 	}
 
-	err = SwitchProxyAuto(filename)
+	err = fproxy.SwitchProxyAuto(filename)
 	if err != nil {
 		t.Errorf("Error SwitchProxySub")
 	}
@@ -43,7 +44,7 @@ func Test_SwitchProxyAuto(t *testing.T) {
 		t.Error("Error to Read File")
 	}
 
-	if strings.Contains(string(input), cPx) {
+	if strings.Contains(string(input), fproxy.Cpx) {
 		t.Error("Error to Proxy Replace")
 	}
 }
