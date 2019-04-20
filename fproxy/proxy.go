@@ -14,12 +14,12 @@ const (
 func SwitchProxyAuto(filename string) (err error) {
 	input, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return
+		return err
 	}
 	output := strings.NewReplacer(Px, Cpx, Cpx, Px).Replace(string(input))
 	err = ioutil.WriteFile(filename, []byte(output), 0666)
 	if err != nil {
-		return
+		return err
 	}
-	return
+	return nil
 }

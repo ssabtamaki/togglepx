@@ -21,7 +21,7 @@ func main() {
 		os.Exit(1)
 	}
 	//プロキシ下のネットワークアドレスにいるとき
-	if netIPv4.String() == cli.PxIP {
+	if netIPv4.String() == cli.PxIP.String() {
 		err = fproxy.SwitchProxyAuto(cli.Fpath)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Failed to Comment Out.　自動コメントアウトに失敗しました")

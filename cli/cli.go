@@ -1,9 +1,11 @@
 package cli
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io"
+	"net"
 	"stepupgo/fproxy"
 )
 
@@ -17,8 +19,24 @@ type Stream struct {
 	OutStream, ErrStream io.Writer
 }
 
+type IP net.IP
+
+var PxIP IP
 var Fpath string
-var PxIP string
+
+//flag.Valueインタフェース実装
+func (i *IP) Set(s string) error {
+	parse := net.ParseIP(s)
+	if parse == nil {
+		return errors.New("入力されたIPアドレスが正しくありません")
+	}
+	*i = IP(parse)
+	fmt.Printf("ネットワークアドレスアドレス%sをセットしました\n", i.String())
+	return nil
+}
+func (i *IP) String() string {
+	return net.IP(*i).String()
+}
 
 //CLIのコマンドの設定と実行
 func (s *Stream) Run(args []string) int {
@@ -26,10 +44,8 @@ func (s *Stream) Run(args []string) int {
 	flags := flag.NewFlagSet("swfpx", flag.ContinueOnError)
 	flags.SetOutput(s.ErrStream)
 
-	//ここ、StringVarじゃなくてIP型で、flags.Varでやるのもあり？
-	//そうしたほうが、IPアドレスじゃなかったときにエラーが吐ける
-	//エラーを吐くときはどうする？
-	flags.StringVar(&PxIP, "pxip", PxIP, "Register a network address. When registering, please register the address under proxy environment. ネットワークアドレスを登録します。登録するときは、プロキシ環境下のアドレスを登録してください\n")
+	flags.Var(&PxIP, "pxip", "Register a network address. When registering, please register the address under proxy environment. ネットワークアドレスを登録します。登録するときは、プロキシ環境下のアドレスを登録してください\n")
+
 	var checkIP bool
 	flags.BoolVar(&checkIP, "checkip", false, "Check the registered network address value. 登録したネットワークアドレスの値を確認します\n")
 	var cancelIP bool
@@ -41,57 +57,42 @@ func (s *Stream) Run(args []string) int {
 	var checkPath bool
 	flags.BoolVar(&checkPath, "checkpath", false, "Check the currently set path. 現在設定されているパスを確認します\n")
 
-	var effective bool
-	var ineffective bool
-	flags.BoolVar(&effective, "effective", false, "Uncomment the target file and activate the proxy. 対象ファイルのコメントをはずし、プロキシを有効化します\n")
-	flags.BoolVar(&ineffective, "ineffective", false, "Comment the target file and disable the proxy. 対象ファイルにコメントをつけ、プロキシを無効化します\n")
+	var switching bool
+	flags.BoolVar(&switching, "switch", false, "When commented on the target file, uncomment the target file and activate the proxy. 対象ファイルにコメントされているときは、対象ファイルのコメントをはずし、プロキシを有効化します。\n"+
+		"If the target file is not commented, comment the target file and disable the proxy. 対象ファイルにコメントがされていないときは、対象ファイルにコメントをつけ、プロキシを無効化します\n")
 
 	if err := flags.Parse(args[1:]); err != nil {
 		return ExitCodeParseFlagError
 	}
-	if PxIP != "" {
-		fmt.Fprintf(s.ErrStream, "ネットワークアドレス%sを登録しました\n", PxIP)
-	}
+
 	if checkIP {
 		fmt.Fprintf(s.ErrStream, "現在設定されているネットワークアドレスは%sです\n", PxIP)
 	}
 	if cancelIP {
-		fmt.Fprint(s.ErrStream, "設定されているネットワークアドレスを取り消しました\n")
+		fmt.Fprintln(s.ErrStream, "設定されているネットワークアドレスを取り消しました")
 	}
+
 	if Fpath != "" {
 		fmt.Fprintf(s.ErrStream, "プロキシのオンオフ対象のファイルを、%sにPATHを設定しました\n", Fpath)
 	}
 	if cancelPath {
-		fmt.Fprint(s.ErrStream, "設定されているPATHを取り消しました\n")
+		fmt.Fprintln(s.ErrStream, "設定されているPATHを取り消しました")
 	}
 	if checkPath {
 		fmt.Fprintf(s.ErrStream, "現在設定されているPATHは%sです\n", Fpath)
 	}
 
-	if effective {
+	if switching {
 		if Fpath == "" {
 			fmt.Fprintln(s.ErrStream, "対象ファイルが設定されていないので、プロキシを有効化できません")
 			return ExitCodeExeFlagError
 		}
 		err := fproxy.SwitchProxyAuto(Fpath)
 		if err != nil {
-			fmt.Fprintf(s.ErrStream, "Failed to Comment Out.　自動コメントアウトに失敗しました。エラーの原因:%s\n", err)
-			return ExitCodeExeFlagError
+			fmt.Fprintf(s.ErrStream, "自動コメントアウトに失敗しました。エラーの原因:%s\n", err)
+			return 3
 		}
 		fmt.Fprintln(s.ErrStream, "対象ファイルのコメントをはずし、プロキシを有効化しました\n")
-
-	}
-	if ineffective {
-		if Fpath == "" {
-			fmt.Fprintln(s.ErrStream, "対象ファイルが設定されていないので、プロキシを無効化できません")
-			return ExitCodeExeFlagError
-		}
-		err := fproxy.SwitchProxyAuto(Fpath)
-		if err != nil {
-			fmt.Fprintf(s.ErrStream, "Failed to Comment Out.　自動コメントアウトに失敗しました。エラーの原因:%s\n", err)
-			return ExitCodeExeFlagError
-		}
-		fmt.Fprintln(s.ErrStream, "対象ファイルにコメントをつけ、プロキシを無効化しました")
 	}
 
 	return ExitCodeOK
