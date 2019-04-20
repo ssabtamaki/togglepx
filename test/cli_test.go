@@ -10,37 +10,26 @@ import (
 )
 
 const (
-	filePath = "/test/cli"
+	filePath = "proxy.txt"
 	ip       = "127.0.0.1"
 )
 
-func Test_swfpx(t *testing.T) {
+func Test_cli(t *testing.T) {
+	cli.PxIP = cli.IP(ip)
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	stream := &cli.Stream{OutStream: outStream, ErrStream: errStream}
-	/*
-		args := strings.Split("swfpx -pxip 127.0.0.1", " ")
-		status := stream.Run(args)
-		if status != cli.ExitCodeOK {
-			t.Errorf("ExitStatus = %d, want %d", status, cli.ExitCodeOK)
-		}
-		expected := fmt.Sprintf("ネットワークアドレス%sを登録しました\n", ip)
-		if !strings.Contains(errStream.String(), expected) {
-			t.Errorf("output=%q, want %q", errStream.String(), expected)
-		}
-	*/
-	errStream.Reset()
-	args := strings.Split("swfpx -checkip", " ")
+	args := strings.Split("sfp -checkip", " ")
 	status := stream.Run(args)
 	if status != cli.ExitCodeOK {
 		t.Errorf("ExitStatus = %d, want %d", status, cli.ExitCodeOK)
 	}
-	expected := fmt.Sprintf("現在設定されているネットワークアドレスは%sです\n", cli.PxIP)
+	expected := fmt.Sprintf("現在設定されているネットワークアドレスは%sです\n", cli.PxIP.String())
 	if !strings.Contains(errStream.String(), expected) {
 		t.Errorf("output=%q, want %q", errStream.String(), expected)
 	}
 
 	errStream.Reset()
-	args = strings.Split("swfpx -cancelip", " ")
+	args = strings.Split("sfp -cancelip", " ")
 	status = stream.Run(args)
 	if status != cli.ExitCodeOK {
 		t.Errorf("ExitStatus = %d, want %d", status, cli.ExitCodeOK)
@@ -51,7 +40,7 @@ func Test_swfpx(t *testing.T) {
 	}
 
 	errStream.Reset()
-	args = strings.Split("swfpx -filepath /test/cli", " ")
+	args = strings.Split("sfp -filepath proxy.txt", " ")
 	status = stream.Run(args)
 	if status != cli.ExitCodeOK {
 		t.Errorf("ExitStatus = %d, want %d", status, cli.ExitCodeOK)
@@ -62,18 +51,7 @@ func Test_swfpx(t *testing.T) {
 	}
 
 	errStream.Reset()
-	args = strings.Split("swfpx -cancelpath", " ")
-	status = stream.Run(args)
-	if status != cli.ExitCodeOK {
-		t.Errorf("ExitStatus = %d, want %d", status, cli.ExitCodeOK)
-	}
-	expected = fmt.Sprintln("設定されているPATHを取り消しました")
-	if !strings.Contains(errStream.String(), expected) {
-		t.Errorf("output=%q, want %q", errStream.String(), expected)
-	}
-
-	errStream.Reset()
-	args = strings.Split("swfpx -checkpath", " ")
+	args = strings.Split("sfp -checkpath", " ")
 	status = stream.Run(args)
 	if status != cli.ExitCodeOK {
 		t.Errorf("ExitStatus = %d, want %d", status, cli.ExitCodeOK)
@@ -84,13 +62,30 @@ func Test_swfpx(t *testing.T) {
 	}
 
 	errStream.Reset()
-	args = strings.Split("swfpx -switch", " ")
+	args = strings.Split("sfp -cancelpath", " ")
 	status = stream.Run(args)
-	cli.Fpath = "/Users/ssab/go/src/stepupgo/test/proxy.txt"
+	if status != cli.ExitCodeOK {
+		t.Errorf("ExitStatus = %d, want %d", status, cli.ExitCodeOK)
+	}
+	if cli.Fpath != "" {
+		t.Errorf("Fpath error")
+	}
+	expected = fmt.Sprintln("設定されているPATHを取り消しました")
+	if !strings.Contains(errStream.String(), expected) {
+		t.Errorf("output=%q, want %q", errStream.String(), expected)
+	}
+
+	errStream.Reset()
+	cli.Fpath = filePath
+	args = strings.Split("sfp -switch", " ")
+	status = stream.Run(args)
 	cli.PxIP = cli.IP(net.IP(ip))
+	//以下で、ファイルがきちんと切り替わっているかチェック
+
 	if status != cli.ExitCodeOK {
 		t.Errorf("ExitStatus = %d, want %d", status, cli.ExitCodeOK)
 	}
 
+	//pxip以外、すべてテスト完了
 
 }
