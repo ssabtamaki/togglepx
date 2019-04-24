@@ -5,12 +5,21 @@ import (
 	"net"
 )
 
-//ネットワークアドレスを取得する
-func GetNetIPv4() (netIPv4 net.IP, err error) {
+type Tster interface {
+	GetNetAddr() (net.IP, error)
+}
+
+type Client struct {
+	Tst Tster
+}
+
+type Actual struct{}
+
+func (a *Actual) GetNetAddr() (net.IP, error) {
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		fmt.Println("cannot get address.")
-		return
+		return nil, err
 	}
 
 	var ipv4 net.IP
@@ -24,6 +33,14 @@ func GetNetIPv4() (netIPv4 net.IP, err error) {
 	}
 
 	mask := ipv4.DefaultMask()
-	netIPv4 = ipv4.Mask(mask)
-	return
+	netAddr := ipv4.Mask(mask)
+	return netAddr, err
+}
+
+func (c *Client) NetPrint() (string, error) {
+	netAddr, err := c.Tst.GetNetAddr()
+	if err != nil {
+		return "", err
+	}
+	return netAddr.String(), nil
 }
