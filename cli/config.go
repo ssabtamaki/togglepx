@@ -39,7 +39,7 @@ func NewCreateJsonFile() error {
 }
 
 //jsonを読みこみ、構造体pに渡す
-func (p *PathIPConfig) ReadJsonTransfer() error {
+func (p *PathIPConfig) ReadJsonTransfer(JsonPath string) error {
 	//ファイルの存在確認
 	_, err := os.Stat(JsonPath)
 	if os.IsNotExist(err) {

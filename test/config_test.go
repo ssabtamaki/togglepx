@@ -27,7 +27,7 @@ func Test_newCreateJsonFile(t *testing.T) {
 		t.Errorf("ファイル作成エラー")
 	}
 	p := cli.PathIPConfig{}
-	err = p.ReadJsonTransfer()
+	err = p.ReadJsonTransfer(cli.JsonPath)
 	if err != nil {
 		t.Errorf("transfer err")
 	}
@@ -48,7 +48,7 @@ func Test_WriteToJsonFile(t *testing.T) {
 		t.Errorf("ファイルに書き込みに失敗")
 	}
 	q := cli.PathIPConfig{}
-	err = q.ReadJsonTransfer()
+	err = q.ReadJsonTransfer(cli.JsonPath)
 	if err != nil {
 		t.Errorf("ReadJsonTransger失敗")
 	}

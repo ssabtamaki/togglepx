@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"stepupgo/fproxy"
 )
 
 const (
 	ExitCodeOK = iota
 	ExitCodeParseFlagError
 	ExitCodeExeFlagError
-	JsonError
+	WriteJsonFileError
 )
 
 type Stream struct {
@@ -19,40 +20,55 @@ type Stream struct {
 }
 
 func (s *Stream) Run(args []string, p *PathIPConfig) int {
-	err := p.ReadJsonTransfer()
-	if err != nil {
-		fmt.Print("Jsonファイルから構造体への変換に失敗しました。")
-		return JsonError
-	}
-
-
 	flags := flag.NewFlagSet("sfp", flag.ContinueOnError)
 	flags.SetOutput(s.ErrStream)
 
-	var orgP string
+	//変数名あとで変更しておく
+	var orgP string //Valueの値は""のほうがいい？
 	flags.StringVar(&orgP, "pxip", p.PxIP, "test")
-	if net.ParseIP(orgP) == nil {
-		//エラーでExit
-	} else {
-		p.PxIP = orgP
-		/*Jsonに書き込む処理*/
-	}
+	var checkIP bool
+	flags.BoolVar(&checkIP, "checkip", false, "登録したネットワークアドレスの値を確認します")
+	var cancelIP bool
+	flags.BoolVar(&cancelIP, "cancelip", false, "登録したネットワークアドレスの値を解除します")
+	//変数名あとで変更しておく
+	var orgF string
+	flags.StringVar(&orgF, "fpath", p.FilePath, "test")
+	var cancelPath bool
+	flags.BoolVar(&cancelPath, "cancelpath", false, "test")
+	var switching bool
+	flags.BoolVar(&switching, "switch", false, "test")
 
 	if err := flags.Parse(args[1:]); err != nil {
 		return ExitCodeParseFlagError
 	}
-	return ExitCodeOK
-}
 
-
-
-func JsonTest(p *PathIPConfig) (*PathIPConfig, error) {
-	err := p.ReadJsonTransfer()
-	if err != nil {
-		fmt.Print("Jsonファイルから構造体への変換に失敗しました。")
-		return nil, err
+	if net.ParseIP(orgP) != nil {
+		p.PxIP = orgP
+	} else {
+		return ExitCodeExeFlagError
 	}
-	return p, nil
+	if checkIP {
+		fmt.Fprintf(s.ErrStream, "config.jsonに設定されているネットワークアドレスは%sです", p.PxIP)
+	}
+	if cancelIP {
+		p.PxIP = ""
+	}
+	if orgF != "" {
+		p.FilePath = orgF
+	}
+	if cancelPath {
+		p.FilePath = ""
+	}
+	if switching {
+		fproxy.SwitchProxyAuto(p.FilePath)
+	}
+
+	//err := WriteToJsonFile(p)
+	//if err != nil {
+	//	return WriteJsonFileError
+	//}
+
+	return ExitCodeOK
 }
 
 /*
@@ -138,7 +154,6 @@ func (s *Stream) Run(args []string) int {
 	return ExitCodeOK
 }
 */
-
 
 //type IP net.IP
 //flag.Valueインタフェース実装
