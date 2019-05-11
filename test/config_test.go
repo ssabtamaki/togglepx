@@ -3,7 +3,7 @@ package test
 import (
 	"fmt"
 	"os"
-	"stepupgo/cli"
+	"spc/cli"
 	"switchpx/fproxy"
 	"testing"
 )

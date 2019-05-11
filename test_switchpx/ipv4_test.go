@@ -2,21 +2,20 @@ package test
 
 import (
 	"net"
-	"stepupgo/fproxy"
+	"switchpx/fproxy"
 	"testing"
 )
 
-type dummyTster struct { /*Tsterが暗黙的に宣言されてる?*/
-}
+type dummyMock struct{}
 
 //ダミーのネットワークアドレスを返すように、モックを実装
-func (d *dummyTster) GetNetAddr() (net.IP, error) {
+func (d *dummyMock) GetNetAddr() (net.IP, error) {
 	return net.IPv4(127, 0, 0, 0), nil
 }
 
 func TestNetIP(t *testing.T) {
-	c := &fproxy.Client{Tst: &dummyTster{}}
-	netAddr, err := c.NetPrint()
+	c := &fproxy.Client{Tst: &dummyMock{}}
+	netAddr, err := c.NetAddrPrint()
 	if err != nil {
 		t.Errorf("caused error:%s", err)
 	}
@@ -25,7 +24,7 @@ func TestNetIP(t *testing.T) {
 	}
 
 	c = &fproxy.Client{Tst: &fproxy.Actual{}}
-	netAddr, err = c.NetPrint()
+	netAddr, err = c.NetAddrPrint()
 	if err != nil {
 		t.Errorf("caused error:%s", err)
 	}

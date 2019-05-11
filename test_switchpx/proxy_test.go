@@ -3,8 +3,8 @@ package test
 import (
 	"io/ioutil"
 	"os"
-	"spc/fproxy"
 	"strings"
+	"switchpx/fproxy"
 	"testing"
 )
 

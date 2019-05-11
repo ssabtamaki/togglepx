@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"stepupgo/cli"
+	"spc/cli"
 	"strings"
 	"testing"
 )
