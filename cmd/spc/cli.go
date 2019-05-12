@@ -1,11 +1,11 @@
-package cli
+package main
 
 import (
 	"flag"
 	"fmt"
-	"github.com/ssabcire/switchpx/fproxy"
 	"io"
 	"net"
+	"stepupgo/lib"
 )
 
 const (
@@ -20,7 +20,7 @@ type Stream struct {
 	OutStream, ErrStream io.Writer
 }
 
-func (s *Stream) Run(args []string, p *PathIPConfig) int {
+func (s *Stream) Run(args []string, p *lib.PathIPConfig) int {
 	// switch proxy cli
 	flags := flag.NewFlagSet("spc", flag.ContinueOnError)
 	flags.SetOutput(s.ErrStream)
@@ -81,7 +81,7 @@ func (s *Stream) Run(args []string, p *PathIPConfig) int {
 		fmt.Fprint(s.ErrStream, "設定されていたパスを解除しました\n")
 	}
 	if switching {
-		err := fproxy.SwitchProxyAuto(p.FilePath)
+		err := lib.SwitchProxyAuto(p.FilePath)
 		if err != nil {
 			fmt.Fprint(s.ErrStream, "プロキシの切り替えに失敗しました。設定ファイルのパスが正しいか確認してください。")
 			return switchProxyError
@@ -89,7 +89,7 @@ func (s *Stream) Run(args []string, p *PathIPConfig) int {
 		fmt.Fprint(s.ErrStream, "プロキシを切り替えました\n")
 	}
 
-	err := writeToJsonFile(p)
+	err := lib.WriteToJsonFile(p)
 	if err != nil {
 		return writeJsonFileError
 	}

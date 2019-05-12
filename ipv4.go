@@ -1,4 +1,4 @@
-package fproxy
+package main
 
 import (
 	"fmt"

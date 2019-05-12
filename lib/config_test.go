@@ -1,4 +1,4 @@
-package test
+package lib
 
 import (
 	"fmt"
@@ -62,7 +62,6 @@ func Test_WriteToJsonFile(t *testing.T) {
 		t.Errorf("get %v, want %v", p.FilePath, expected)
 	}
 }
-
 
 //package test
 //
