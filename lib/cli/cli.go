@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net"
-	"stepupgo/lib"
+	"tpa/lib"
 )
 
 const (
@@ -22,7 +22,7 @@ type Stream struct {
 
 func (s *Stream) Run(args []string, p *lib.PathIPConfig) int {
 	// switch proxy cli
-	flags := flag.NewFlagSet("spc", flag.ContinueOnError)
+	flags := flag.NewFlagSet("cli", flag.ContinueOnError)
 	flags.SetOutput(s.ErrStream)
 
 	//変数名あとで変更しておく

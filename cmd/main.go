@@ -1,9 +1,9 @@
-package main
+package cmd
 
 import (
 	"fmt"
 	"os"
-	"stepupgo/lib"
+	"tpa/lib"
 )
 
 func main() {

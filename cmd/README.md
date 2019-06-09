@@ -1,6 +1,6 @@
-# Switch Proxy CLI
+# tpa CLI
 
-sfpは、switchpxのバイナリをさらに使いやすくするためのCLIです
+tpa CLIは、tpaバイナリをさらに使いやすくするためのCLIです
 
 ---
 * [Features](#features)

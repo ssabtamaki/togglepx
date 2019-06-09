@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"stepupgo/lib"
+	"tpa/lib"
 )
 
 func main() {
@@ -27,7 +27,7 @@ func main() {
 	}
 
 	//ネットワークアドレスの取得
-	c := &Client{Tst: &Actual{}}
+	c := &lib.Client{Tst: &lib.Actual{}}
 	netAddr, err := c.NetAddrPrint()
 	if err != nil {
 		log.Print("ネットワークアドレスの取得に失敗しました")

@@ -1,68 +1,50 @@
+# tpa
+
+tpaは**"toggle_proxy_automatically"**という意味で、自動でプロキシを切り替えてくれるバイナリです。
+
+---
+* [Features](#features)
+* [Requirements](#requirements)
+* [Installation](#installation)
+* [Usage](#usage)
+    * [Quick Start](#quick-start)
+
+---
+
 # features
-ターミナルを起動させたときに、 .gitconfigや, .curlrcに設定されているProxyを切り替えてくれる優れものです。  
-プロキシサーバ下の大学や職場と、それが無い自宅の両方でPCを使うとき、.gitconfigなどのProxyの行をいちいちコメントアウトなどをしていませんか?  
-それはGo言語さんのバイナリに勝手に行ってもらいましょう。  
-<br><br><br>
+このtpaバイナリは、ターミナルを起動させたときに、あなたの環境下のネットワークアドレスを判断し、
+.gitconfigや.curlrcに記述されているProxy設定の行を、自動でコメント/コメントアウトして、gitコマンドやcurlができるようにします。  
 
-## Example
-プロキシは普通以下のように書かれていると思います。  
-```
-proxy=<プロキシ>:<ポート>
-```
-<br>
+---
 
-その行を、ターミナルが起動したときに自動でコメントアウトしてくれます
+## Installation
+* **Goの開発環境があなたのPCに存在する場合**
 ```
-# proxy=<プロキシ>:<ポート>
+go get github.com/ssabcire/spc
 ```
 <br>
 
-もしくは、プロキシ下のネットワークにいないときは、コメントアウトを取り除いてくれます。  
-<br><br><br>
+* **Goの開発環境があなたのPCに存在しない場合**  
+Download a binary from [release page](https://github.com/ssabcire/spc/releases)
+```
+vim ~/.bashrc
+<バイナリのPATHを記載>
+```
 
-## Dependency
-go 1.11.1  
-zsh  
-<br><br>
+
+---
 
 ## Usage
-まず、プロキシ環境下のネットワークアドレスを求める必要があります。  
-手計算やどこかのサイトで求められる方はそちらを。それが厳しかったら、fproxyのGetNetAddr()さんを使いましょう。   
-以下のようなコードでネットワークアドレスを求められます。  
-```go
-package main
-
-import (
-    "fmt"
-    "switchpx/fproxy"
-)
-
-func main() {
-    var actual fproxy.Actual
-    s, _ := actual.GetNetAddr()
-	fmt.Println(s.String())
+1. 切り替えたいファイルなどを記述するための~/.sfp/config.jsonを作成します。そのために、〜します。  
+2. 次に、~/.sfp/config.jsonに、設定したいファイルと、ネットワークアドレスを書き込みます。  
+例
+```json
+{
+  {},
+  {},
 }
 ```
 
-<br><br>
-次に、設定ファイルを生成します。  
-一度、switchpxのバイナリを実行します。  
-```
-./switchpx
-```
-<br>
+---
 
-そうすると、  
-```
-自動コメントアウトに失敗しました。 read test: is a directory
-```
-というコメントが出ますが、設定ファイルの作成には成功しました。  
-~/.sfp/config.jsonという設定ファイルができていると思います。  
-<br><br>
-
-このconfig.jsonファイルに、.gitconfigやzshrc,curlrcなど、自動で切り替えてほしいファイルのパスを書き込みます。  
-例:"filepath": "/User/ssab/.gitconfig"  
-(現在~/.gitconfigなどの書き方に対応していません)  
-<br>
-
-次に、
+##Example
