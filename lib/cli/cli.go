@@ -27,7 +27,6 @@ func (s *Stream) Run(args []string, p *lib.PathIPConfig) int {
 	flags := flag.NewFlagSet("tpa", flag.ContinueOnError)
 	flags.SetOutput(s.ErrStream)
 
-	//変数名あとで変更しておく
 	var tempP string
 	flags.StringVar(&tempP, "pxip", "", "ネットワークアドレスを設定します。プロキシ下のネットワークアドレスをここに設定してください。")
 	var checkIP bool
@@ -35,7 +34,7 @@ func (s *Stream) Run(args []string, p *lib.PathIPConfig) int {
 	var cancelIP bool
 	flags.BoolVar(&cancelIP, "cancelip", false, "設定したネットワークアドレスの値を解除します")
 	var tempF string
-	flags.StringVar(&tempF, "fpath", "", "PATHを設定できます。プロキシが書かれたdotfileのPATHを記載してください")
+	flags.StringVar(&tempF, "filepath", "", "PATHを設定できます。プロキシが書かれたdotfileのPATHを記載してください")
 	var checkPath bool
 	flags.BoolVar(&checkPath, "checkpath", false, "設定されたPATHの値を確認します")
 	var cancelPath bool
@@ -68,7 +67,7 @@ func (s *Stream) Run(args []string, p *lib.PathIPConfig) int {
 	}
 	if tempF != "" {
 		p.FilePath = tempF
-		fmt.Fprint(s.ErrStream, "自動で切り替える対象のファイルのパスを<%s>にしました\n", p.FilePath)
+		fmt.Fprintf(s.ErrStream, "自動で切り替える対象のファイルのパスを<%s>にしました\n", p.FilePath)
 	}
 	if checkPath {
 		if p.FilePath != "" {
@@ -82,7 +81,7 @@ func (s *Stream) Run(args []string, p *lib.PathIPConfig) int {
 		fmt.Fprint(s.ErrStream, "設定されていたパスを解除しました\n")
 	}
 	if switching {
-		err := lib.SwitchProxyAuto(p.FilePath)
+		err := lib.ToggleProxyAuto(p.FilePath)
 		if err != nil {
 			fmt.Fprint(s.ErrStream, "プロキシの切り替えに失敗しました。設定ファイルのパスが正しいか確認してください。")
 			return switchProxyError

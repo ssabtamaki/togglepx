@@ -26,14 +26,14 @@ func main() {
 
 	//プロキシ下のネットワークアドレスにいるとき
 	if netAddr == pathIPConfig.FilePath {
-		err = lib.SwitchProxyAuto(pathIPConfig.FilePath)
+		err = lib.ToggleProxyAuto(pathIPConfig.FilePath)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "自動コメントアウトに失敗しました。", err)
 		}
 		os.Exit(0)
 	}
 	//プロキシ環境下以外のとき
-	err = lib.SwitchProxyAuto(pathIPConfig.FilePath)
+	err = lib.ToggleProxyAuto(pathIPConfig.FilePath)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "自動コメントアウトに失敗しました。", err)
 	}

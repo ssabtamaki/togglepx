@@ -20,7 +20,7 @@ var jsonDir = func() string {
 	if err != nil {
 		return ""
 	}
-	jsonPath := filepath.Join(user.HomeDir, ".sfp")
+	jsonPath := filepath.Join(user.HomeDir, ".tpa")
 	return jsonPath
 }()
 
