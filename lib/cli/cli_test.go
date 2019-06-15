@@ -1,10 +1,18 @@
+package cli_test
+
+import "testing"
+
+func Test_CliSubCommand_pxip(t *testing.T) {
+
+}
+
 //package main
 //
 //import (
 //	"bytes"
 //	"fmt"
 //	"io/ioutil"
-//	"tpa/lib"
+//	"togglepx/lib"
 //	"strings"
 //	"testing"
 //)
@@ -80,7 +88,7 @@
 //		t.Errorf("want %v, get %v", expected, p.FilePath)
 //	}
 //
-//	p.FilePath = "/Users/ssab/go/src/tpa/test/proxy.txt"
+//	p.FilePath = "/Users/ssab/go/src/togglepx/test/proxy.txt"
 //	errStream.Reset()
 //	args = strings.Split("sfp -switch", " ")
 //	status = stream.Run(args, &p)

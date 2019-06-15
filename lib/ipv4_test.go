@@ -1,9 +1,9 @@
-package test
+package lib_test
 
 import (
 	"net"
-	"switchpx/fproxy"
 	"testing"
+	"tpa/lib"
 )
 
 type dummyMock struct{}
@@ -14,7 +14,7 @@ func (d *dummyMock) GetNetAddr() (net.IP, error) {
 }
 
 func TestNetIP(t *testing.T) {
-	c := &fproxy.Client{Tst: &dummyMock{}}
+	c := &lib.Client{Tst: &dummyMock{}}
 	netAddr, err := c.NetAddrPrint()
 	if err != nil {
 		t.Errorf("caused error:%s", err)
@@ -23,7 +23,7 @@ func TestNetIP(t *testing.T) {
 		t.Errorf("want %s, got %s", expected, netAddr)
 	}
 
-	c = &fproxy.Client{Tst: &fproxy.Actual{}}
+	c = &lib.Client{Tst: &lib.Actual{}}
 	netAddr, err = c.NetAddrPrint()
 	if err != nil {
 		t.Errorf("caused error:%s", err)

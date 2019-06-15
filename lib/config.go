@@ -14,7 +14,7 @@ type PathIPConfig struct {
 	PxIP     string `json:"pxip"`
 }
 
-var JsonDir = func() string {
+var jsonDir = func() string {
 	//現在のユーザーを取得
 	user, err := user.Current()
 	if err != nil {
@@ -25,10 +25,34 @@ var JsonDir = func() string {
 }()
 
 var JsonPath = func() string {
-	jsonPath := filepath.Join(JsonDir, "config.json")
+	jsonPath := filepath.Join(jsonDir, "config.json")
 	return jsonPath
 }()
 
+//ディレクトリの存在確認をして、なければ作成をする
+func ifDirNotExistMkdir() error {
+	_, err := os.Stat(jsonDir)
+	if os.IsNotExist(err) {
+		err = os.MkdirAll(jsonDir, 0777)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func ifFileNotExistMkfile() error {
+	_, err := os.Stat(JsonPath)
+	if os.IsNotExist(err) {
+		err = newCreateJsonFile()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+//JSONファイルの作成
 func newCreateJsonFile() error {
 	content := []byte(`
 {
@@ -45,13 +69,13 @@ func newCreateJsonFile() error {
 
 //jsonを読みこみ、構造体pに渡す
 func (p *PathIPConfig) ReadJsonTransfer(JsonPath string) error {
-	//ファイルの存在確認
-	_, err := os.Stat(JsonPath)
-	if os.IsNotExist(err) {
-		err = newCreateJsonFile()
-		if err != nil {
-			return err
-		}
+	err := ifDirNotExistMkdir()
+	if err != nil {
+		return err
+	}
+	err = ifFileNotExistMkfile()
+	if err != nil {
+		return err
 	}
 
 	data, err := ioutil.ReadFile(JsonPath)
@@ -61,18 +85,6 @@ func (p *PathIPConfig) ReadJsonTransfer(JsonPath string) error {
 	}
 
 	err = json.Unmarshal(data, &p)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func WriteToJsonFile(p *PathIPConfig) error {
-	json, err := json.MarshalIndent(p, "", "  ")
-	if err != nil {
-		return err
-	}
-	err = ioutil.WriteFile(JsonPath, json, 0666)
 	if err != nil {
 		return err
 	}

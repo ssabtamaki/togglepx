@@ -1,11 +1,11 @@
-package test
+package lib_test
 
 import (
 	"io/ioutil"
 	"os"
-	"spc/fproxy"
 	"strings"
 	"testing"
+	"tpa/lib"
 )
 
 func Test_SwitchProxyAuto(t *testing.T) {
@@ -21,7 +21,7 @@ func Test_SwitchProxyAuto(t *testing.T) {
 		t.Error("Error to Write to File")
 	}
 
-	err = fproxy.SwitchProxyAuto(filename)
+	err = lib.ToggleProxyAuto(filename)
 	if err != nil {
 		t.Errorf("Error SwitchProxyAdd")
 	}
@@ -31,11 +31,11 @@ func Test_SwitchProxyAuto(t *testing.T) {
 		t.Error("Error to Read File")
 	}
 
-	if !strings.Contains(string(input), fproxy.Cpx) {
+	if !strings.Contains(string(input), lib.ExportPx) {
 		t.Error("Error to Proxy Replace")
 	}
 
-	err = fproxy.SwitchProxyAuto(filename)
+	err = lib.ToggleProxyAuto(filename)
 	if err != nil {
 		t.Errorf("Error SwitchProxySub")
 	}
@@ -44,7 +44,7 @@ func Test_SwitchProxyAuto(t *testing.T) {
 		t.Error("Error to Read File")
 	}
 
-	if strings.Contains(string(input), fproxy.Cpx) {
+	if strings.Contains(string(input), lib.ExportCommentPx) {
 		t.Error("Error to Proxy Replace")
 	}
 }

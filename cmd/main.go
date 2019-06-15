@@ -1,9 +1,10 @@
-package cmd
+package main
 
 import (
 	"fmt"
 	"os"
 	"tpa/lib"
+	"tpa/lib/cli"
 )
 
 func main() {
@@ -14,7 +15,7 @@ func main() {
 		fmt.Print("ファイルの読み込みに失敗")
 		os.Exit(1)
 	}
-	stream := Stream{os.Stdout, os.Stderr}
+	stream := cli.Stream{os.Stdout, os.Stderr}
 	//cli起動、cliに構造体渡す
 	os.Exit(stream.Run(os.Args, &p))
 }

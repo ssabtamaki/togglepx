@@ -1,9 +1,11 @@
-package main
+package cli
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net"
 	"tpa/lib"
 )
@@ -21,33 +23,32 @@ type Stream struct {
 }
 
 func (s *Stream) Run(args []string, p *lib.PathIPConfig) int {
-	// switch proxy cli
-	flags := flag.NewFlagSet("cli", flag.ContinueOnError)
+	// taggle proxy auto
+	flags := flag.NewFlagSet("tpa", flag.ContinueOnError)
 	flags.SetOutput(s.ErrStream)
 
 	//変数名あとで変更しておく
-	var orgP string //Valueの値をうまく設定しないといけない。
-	flags.StringVar(&orgP, "pxip", "", "test")
+	var tempP string
+	flags.StringVar(&tempP, "pxip", "", "ネットワークアドレスを設定します。プロキシ下のネットワークアドレスをここに設定してください。")
 	var checkIP bool
-	flags.BoolVar(&checkIP, "checkip", false, "登録したネットワークアドレスの値を確認します")
+	flags.BoolVar(&checkIP, "checkip", false, "設定したネットワークアドレスの値を確認します")
 	var cancelIP bool
-	flags.BoolVar(&cancelIP, "cancelip", false, "登録したネットワークアドレスの値を解除します")
-	//変数名あとで変更しておく
-	var orgF string
-	flags.StringVar(&orgF, "fpath", "", "test")
+	flags.BoolVar(&cancelIP, "cancelip", false, "設定したネットワークアドレスの値を解除します")
+	var tempF string
+	flags.StringVar(&tempF, "fpath", "", "PATHを設定できます。プロキシが書かれたdotfileのPATHを記載してください")
 	var checkPath bool
-	flags.BoolVar(&checkPath, "checkpath", false, "test")
+	flags.BoolVar(&checkPath, "checkpath", false, "設定されたPATHの値を確認します")
 	var cancelPath bool
-	flags.BoolVar(&cancelPath, "cancelpath", false, "test")
+	flags.BoolVar(&cancelPath, "cancelpath", false, "設定されたPATHの値を解除します")
 	var switching bool
-	flags.BoolVar(&switching, "switch", false, "test")
+	flags.BoolVar(&switching, "switch", false, "プロキシをコメント/コメントアウトして、切り替えます")
 
 	if err := flags.Parse(args[1:]); err != nil {
 		return exitCodeParseFlagError
 	}
-	if orgP != "" {
-		if net.ParseIP(orgP) != nil {
-			p.PxIP = orgP
+	if tempP != "" {
+		if net.ParseIP(tempP) != nil {
+			p.PxIP = tempP
 			fmt.Fprintf(s.ErrStream, "ネットワークアドレスを<%s>に設定しました\n", p.PxIP)
 		} else {
 			fmt.Fprint(s.ErrStream, "入力されたアドレスが正しくありません\n")
@@ -65,8 +66,8 @@ func (s *Stream) Run(args []string, p *lib.PathIPConfig) int {
 		p.PxIP = ""
 		fmt.Fprint(s.ErrStream, "設定されていたネットワークアドレスを解除しました\n")
 	}
-	if orgF != "" {
-		p.FilePath = orgF
+	if tempF != "" {
+		p.FilePath = tempF
 		fmt.Fprint(s.ErrStream, "自動で切り替える対象のファイルのパスを<%s>にしました\n", p.FilePath)
 	}
 	if checkPath {
@@ -89,10 +90,22 @@ func (s *Stream) Run(args []string, p *lib.PathIPConfig) int {
 		fmt.Fprint(s.ErrStream, "プロキシを切り替えました\n")
 	}
 
-	err := lib.WriteToJsonFile(p)
+	err := writeToJsonFile(p)
 	if err != nil {
 		return writeJsonFileError
 	}
 
 	return exitCodeOK
+}
+
+func writeToJsonFile(p *lib.PathIPConfig) error {
+	json, err := json.MarshalIndent(p, "", "  ")
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(lib.JsonPath, json, 0666)
+	if err != nil {
+		return err
+	}
+	return nil
 }
