@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"tpa/lib"
+	"togglepx/lib"
 )
 
 func Test_SwitchProxyAuto(t *testing.T) {

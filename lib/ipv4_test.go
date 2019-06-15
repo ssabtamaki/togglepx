@@ -3,7 +3,7 @@ package lib_test
 import (
 	"net"
 	"testing"
-	"tpa/lib"
+	"togglepx/lib"
 )
 
 type dummyMock struct{}

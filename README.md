@@ -1,6 +1,6 @@
 # tpa
 
-tpaは**"toggle_proxy_automatically"**という意味で、自動でプロキシを切り替えてくれるバイナリです。
+tpaは"toggle_proxy_automatically"という意味で、自動でプロキシを切り替えてくれるバイナリです。
 
 ---
 * [Features](#features)
@@ -13,14 +13,16 @@ tpaは**"toggle_proxy_automatically"**という意味で、自動でプロキシ
 
 # features
 このtpaバイナリは、ターミナルを起動させたときに、あなたの環境下のネットワークアドレスを判断し、
-.gitconfigや.curlrcに記述されているProxy設定の行を、自動でコメント/コメントアウトして、gitコマンドやcurlができるようにします。  
+.gitconfigや.curlrcに記述されているProxy設定の行を自動でコメント/コメントアウトして、gitコマンドやcurlができるようにします。  
+
+職場や大学がプロキシサーバーで自宅がそうでない場合、毎回.gitconfigなどのプロキシ行を書き換えなければならなかったため、そのような場合に使うといいと思います。  
 
 ---
 
 ## Installation
 * **Goの開発環境があなたのPCに存在する場合**
 ```
-go get github.com/ssabcire/spc
+go get github.com/ssabcire/tpa
 ```
 <br>
 

@@ -20,7 +20,7 @@ var jsonDir = func() string {
 	if err != nil {
 		return ""
 	}
-	jsonPath := filepath.Join(user.HomeDir, ".tpa")
+	jsonPath := filepath.Join(user.HomeDir, ".togglepx")
 	return jsonPath
 }()
 

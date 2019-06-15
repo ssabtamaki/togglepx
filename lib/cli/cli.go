@@ -7,7 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net"
-	"tpa/lib"
+	"togglepx/lib"
 )
 
 const (
@@ -24,7 +24,7 @@ type Stream struct {
 
 func (s *Stream) Run(args []string, p *lib.PathIPConfig) int {
 	// taggle proxy auto
-	flags := flag.NewFlagSet("tpa", flag.ContinueOnError)
+	flags := flag.NewFlagSet("togglepx", flag.ContinueOnError)
 	flags.SetOutput(s.ErrStream)
 
 	var tempP string
