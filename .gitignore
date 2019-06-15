@@ -1,6 +1,4 @@
-.idea
-.DS_Store
-proxy.txt
-tpa
-togglepx
+/togglepx
+/cmd/tpa/tpa
 config.json
+.idea
