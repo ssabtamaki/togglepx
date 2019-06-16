@@ -130,4 +130,4 @@ proxy=<プロキシサーバー>:<ポート>
 ## Addition
 このバイナリをさらに便利にするためのCLIも作成しています。  
 togglepx/cmd/tpaにCLIのバイナリがあります。  
-[CLIのREADME](https://github.com/ssabcire/togglepx/blob/master/cmd/README.md)
+[CLIのREADME](cmd/tpa/README.md)
