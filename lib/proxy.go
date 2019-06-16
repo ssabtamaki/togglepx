@@ -18,7 +18,7 @@ func ProxyOFF(filename string) (err error) {
 	}
 	//output := strings.NewReplacer(px, commentPx).Replace(string(input))
 	output := input
-	if regexp.MustCompile(px).MatchString(string(input)) && !regexp.MustCompile(px).MatchString(string(input)) {
+	if regexp.MustCompile(px).MatchString(string(input)) && !regexp.MustCompile(commentPx).MatchString(string(input)) {
 		//Replaceする
 		output = []byte(strings.NewReplacer(px, commentPx).Replace(string(input)))
 	}
