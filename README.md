@@ -112,7 +112,7 @@ pxipには、プロキシサーバー下のネットワークアドレスを記�
 
 次に、PATHを~/.bashrcに書き込みます。
 ```
-~/.bashrc
+~/go/src/togglepx/togglepx
 ```
 <br><br>
 
